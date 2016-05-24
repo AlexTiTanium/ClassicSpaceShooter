@@ -1,0 +1,17 @@
+{
+  "appID": "1d78f80eea9940e9896f349bb8f86468",
+  "dependencies": {
+    "devkit-core": "https://github.com/gameclosure/devkit-core#4.5.1"
+  },
+  "shortName": "ClassicSpaceShooter",
+  "studio": {
+    "domain": "studio.example.com",
+    "name": "Your Studio Name",
+    "stagingDomain": "staging.example.com"
+  },
+  "supportedOrientations": [
+    "portrait",
+    "landscape"
+  ],
+  "title": "ClassicSpaceShooter"
+}
