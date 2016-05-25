@@ -4,8 +4,11 @@ import src.Config as Config;
 import src.entities.Player as Player;
 import src.utils.EntitiesPool as EntitiesPool;
 import src.utils.CollisionDetector as CollisionDetector;
+import src.utils.Particles as Particles;
 
 exports = Class(ui.View, function(supr) {
+
+	this.pause = true;
 
 	this.tag = "World";
 	this.fixedTickDelta = 0;
@@ -41,7 +44,15 @@ exports = Class(ui.View, function(supr) {
 		this.bulletPool = new EntitiesPool(Config.bullets, this);
 		this.enemiesPool = new EntitiesPool(Config.enemies, this);
 
-		this.spawnWaves(0, 0); // Run waves
+		this.particles = new Particles(this);
+	};
+
+	/**
+	 * Start spawn enemies
+	 */
+	this.run = function() {
+		this.pause = false;
+		this.spawnWaves(0, 0);
 	};
 
 	/**
@@ -49,9 +60,13 @@ exports = Class(ui.View, function(supr) {
 	 */
 	this.tick = function(dt) {
 
+		if (this.pause) return;
+
 		this.player.update(dt);
 		this.bulletPool.update(dt);
 		this.enemiesPool.update(dt);
+
+		this.particles.update(dt);
 
 		if (this.fixedTickDelta >= this.fixedTick) {
 			this.fixedTickDelta = 0;
@@ -110,6 +125,15 @@ exports = Class(ui.View, function(supr) {
 			return this.spawnWaves(spawn.delay, ++spawnIndex);
 
 		}.bind(this), delay * 1000);
+	};
+
+	/**
+	 * Shurtcut for spawn explosion particles
+	 *
+	 * @arg {Object<x,y>} position - start position
+	 */
+	this.makeBang = function(position) {
+		this.particles.makeBang(position);
 	};
 
 	/**

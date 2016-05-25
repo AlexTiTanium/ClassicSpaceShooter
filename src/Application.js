@@ -1,9 +1,14 @@
 import device;
+import AudioManager;
 import ui.StackView as StackView;
 
+import ui.resource.loader as loader;
 import src.views.World as WorldView;
 import src.views.UserInput as Input;
+import src.views.Loading as Loading;
 import src.Config as Config;
+
+import ui.TextView as TextView;
 
 exports = Class(GC.Application, function() {
 
@@ -14,20 +19,37 @@ exports = Class(GC.Application, function() {
 
 		this.setScale(Config.width, Config.height);
 
-		this.input = new Input({
-			superview: this
+		this.audio = new AudioManager({
+			path: 'resources/sounds',
+			files: Config.sound
 		});
 
-		var rootView = new StackView({
+		this.input = new Input({
+			superview: this.view
+		});
+
+		this.stack = new StackView({
 			superview: this,
+			width: GC.app.baseWidth,
+			height: GC.app.baseHeight,
 			clip: true
 		});
 
-		this.world = new WorldView({
-			parent: rootView
-		});
+		this.world = new WorldView({});
+		this.loading = new Loading({});
 
-		rootView.push(this.world);
+		this.stack.push(this.loading);
+
+		loader.preload(['resources/images', 'resources/sounds'], this.onAssetsReady.bind(this));
+	};
+
+	/**
+	 * Fire when assets is ready
+	 */
+	this.onAssetsReady = function() {
+		this.audio.play('gameplay');
+		this.stack.push(this.world);
+		this.world.run();
 	};
 
 	/**
@@ -43,5 +65,7 @@ exports = Class(GC.Application, function() {
 	/**
 	 *
 	 */
-	this.launchUI = function() {};
+	this.launchUI = function() {
+		//this.audio.play('gameplay');
+	};
 });

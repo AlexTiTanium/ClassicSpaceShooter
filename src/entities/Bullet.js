@@ -41,6 +41,7 @@ exports = Class(SpriteView, function(supr) {
 	 * When animation complete make it wisable on zero frame
 	 */
 	this.animationComplete = function() {
+		if (this.remove) return;
 		this.updateOpts({
 			visible: true
 		}); // Show first(zero) frame of animation

@@ -38,8 +38,16 @@ exports = Class(ImageView, function(supr) {
 	 * Collision collback
 	 */
 	this.onCollision = function(target) {
+
 		this.release();
 		target.release();
+
+		this.getSuperview().makeBang({
+			x: this.style.x + this.style.width / 2,
+			y: this.style.y + this.style.height / 2
+		});
+
+		GC.app.audio.play('explosion_enemy');
 	};
 
 	/**

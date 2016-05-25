@@ -73,7 +73,7 @@ exports = Class(Emitter, function(supr) {
 			if (entitie.style.x + entitie.style.width < 0 ||
 				entitie.style.y + entitie.style.height < 0 ||
 				entitie.style.x + entitie.style.width > GC.app.baseWidth ||
-				entitie.style.y + entitie.style.height > GC.app.baseHeight) {
+				entitie.style.y - entitie.style.height > GC.app.baseHeight) {
 
 				this.pools[entitie.type].releaseView(entitie);
 				this.items.splice(i, 1);

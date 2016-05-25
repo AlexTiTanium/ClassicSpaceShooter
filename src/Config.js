@@ -13,6 +13,32 @@ exports = {
 	player_ship: 'resources/images/ship.png',
 	player_speed: 500,
 
+	// Sound section
+	sound: {
+		gameplay: {
+			path: 'music',
+			volume: 0.3,
+			loop: true,
+			background: true
+		},
+		laser_1: {
+			path: 'effect',
+			volume: 0.1
+		},
+		laser_2: {
+			path: 'effect',
+			volume: 0.1
+		},
+		explosion_enemy: {
+			path: 'effect',
+			volume: 0.2
+		},
+		explosion_player: {
+			path: 'effect',
+			volume: 0.5
+		}
+	},
+
 	// Bullets settings
 	bullets: {
 
@@ -53,8 +79,8 @@ exports = {
 			initCount: 10,
 			image: 'resources/images/enemy_red.png',
 			speed: 0.1,
-			width: 99,
-			height: 75
+			width: 75,
+			height: 57
 		}
 	},
 
@@ -64,11 +90,11 @@ exports = {
 			delay: 2, // delay before spawn firs part
 			spawn: [{
 				enemies: ['red'],
-				count: 3,
+				count: 1,
 				delay: 2
 			}, {
 				enemies: ['red'],
-				count: 2,
+				count: 1,
 				delay: 1
 			}]
 		},
@@ -81,7 +107,7 @@ exports = {
 				delay: 4
 			}, {
 				enemies: ['red'],
-				count: 2,
+				count: 1,
 				delay: 1
 			}]
 		},
@@ -90,11 +116,11 @@ exports = {
 			delay: 2, // delay before spawn firs part
 			spawn: [{
 				enemies: ['red'],
-				count: 3,
+				count: 1,
 				delay: 4
             }, {
 				enemies: ['red'],
-				count: 2,
+				count: 1,
 				delay: 1
             }]
 		},

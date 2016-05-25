@@ -5,13 +5,12 @@
   },
   "shortName": "ClassicSpaceShooter",
   "studio": {
-    "domain": "studio.example.com",
-    "name": "Your Studio Name",
-    "stagingDomain": "staging.example.com"
+    "domain": "xogames.org",
+    "name": "XO games",
+    "stagingDomain": "kucherenko.email@gmail.com"
   },
   "supportedOrientations": [
-    "portrait",
-    "landscape"
+    "portrait"
   ],
-  "title": "ClassicSpaceShooter"
+  "title": "Classic Space Shooter"
 }

@@ -4,6 +4,7 @@ import math.util as util;
 import math.geom.Vec2D as Vec2D;
 import ui.resource.Image as Image;
 import src.Config as Config;
+import src.utils.Random as Random;
 
 var ship_image = new Image({
 	url: Config.player_ship
@@ -112,6 +113,8 @@ exports = Class(ImageView, function(supr) {
 			x: this.style.x + ship_image.getWidth() / 2,
 			y: this.style.y
 		}, this.shoot_direction);
+
+		GC.app.audio.play('laser_' + Random.integer(1, 2));
 	};
 
 });
