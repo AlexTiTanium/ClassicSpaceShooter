@@ -13,6 +13,39 @@ exports = {
 	player_ship: 'resources/images/ship.png',
 	player_speed: 500,
 
+	// Parallax background
+	background: {
+		image: 'resources/images/bg.png',
+		width: 256,
+		height: 256,
+		speed: 0.1,
+		zIndex: -10,
+		// Warn! Supported onlu Y direction
+		direction: {
+			x: 0,
+			y: 1
+		}
+	},
+
+	// Parallax items
+	env_items: {
+		objects: [
+            'resources/images/object_1.png',
+            'resources/images/object_2.png',
+            'resources/images/object_3.png'
+        ],
+		stars: ['resources/images/star.png'],
+		generateObjectEvery: 2000, // Ticks
+		generateStarEvery: 400, // Ticks
+		//zIndex: -8,
+		speed: 0.2,
+		// Warn! Supported onlu Y direction
+		direction: {
+			x: 0,
+			y: 1
+		}
+	},
+
 	// Sound section
 	sound: {
 		gameplay: {

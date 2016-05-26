@@ -5,6 +5,8 @@ import src.entities.Player as Player;
 import src.utils.EntitiesPool as EntitiesPool;
 import src.utils.CollisionDetector as CollisionDetector;
 import src.utils.Particles as Particles;
+import src.views.ParallaxBackgroundScroll as ParallaxBackgroundScroll;
+import src.views.ParallaxItemsScroll as ParallaxItemsScroll;
 
 exports = Class(ui.View, function(supr) {
 
@@ -45,6 +47,9 @@ exports = Class(ui.View, function(supr) {
 		this.enemiesPool = new EntitiesPool(Config.enemies, this);
 
 		this.particles = new Particles(this);
+
+		this.parallaxBg = new ParallaxBackgroundScroll(Config.background, this);
+		this.parallaxItems = new ParallaxItemsScroll(Config.env_items, this);
 	};
 
 	/**
@@ -67,6 +72,9 @@ exports = Class(ui.View, function(supr) {
 		this.enemiesPool.update(dt);
 
 		this.particles.update(dt);
+
+		this.parallaxBg.update(dt);
+		this.parallaxItems.update(dt);
 
 		if (this.fixedTickDelta >= this.fixedTick) {
 			this.fixedTickDelta = 0;

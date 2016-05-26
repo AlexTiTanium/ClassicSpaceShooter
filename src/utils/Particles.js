@@ -121,7 +121,7 @@ exports = Class(Emitter, function(supr) {
 	 * Particle engine tick
 	 */
 	this.update = function(dt) {
-		this.engine.runTick(dt);
+		this.engine.runTick(dt * 2.5);
 	}
 
 });

@@ -6,5 +6,9 @@ exports = {
 
 	float: function(min, max) {
 		return min + Math.random() * (max - min);
+	},
+
+	choose: function(array) {
+		return array[this.integer(0, array.length - 1)];
 	}
 };
