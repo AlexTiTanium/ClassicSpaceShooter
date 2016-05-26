@@ -1,16 +1,20 @@
-devkit-application-template
+Classic space shooter game
 ===========================
+My experiment with Game Closure devkit.
 
-Initial file structure for Gameclosure Devkit applications.
+Make release
+--------------------
 
-Includes an empty folder structure that matches the devkit defaults
-and a minimal Application.js file with a "Hello, world!" text view.
+```
+sudo apt-get install openjdk-7-jre-headless
+sudo npm install -g devkit
+git clone https://github.com/AlexTiTanium/ClassicSpaceShooter.git ./
 
+devkit install
+devkit release browser-desktop
+```
 
-You can specify a different initial template for new devkit applications
-by adding the `--git-template` paramater to `devkit init` and passing in
-a path to a git repository.
+Screenshots
+-------------------
 
-~~~
-devkit init newproject --git-template https://github.com/gameclosure/devkit-application-template
-~~~
+![Alt text](http://shots.m18.ru/image/2hwwe5gwby.png "Sreenshots")
