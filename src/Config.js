@@ -1,12 +1,16 @@
 import device;
 import src.entities.Bullet as Bullet;
 import src.entities.EnemyRed as EnemyRed;
+import src.entities.EnemyBlue as EnemyBlue;
 
 exports = {
 
     // Base game dimension
     width: 576,
     height: 1024,
+
+    // Set maximum delta time value
+    max_delta: 100,
 
     // Player settings
     player_start_position_offset: 40,
@@ -19,7 +23,7 @@ exports = {
         width: 256,
         height: 256,
         speed: 0.1,
-        zIndex: -10,
+        zIndex: 1,
         // Warn! Supported onlu Y direction
         direction: {
             x: 0,
@@ -37,13 +41,27 @@ exports = {
         stars: ['resources/images/star.png'],
         generateObjectEvery: 2000, // Ticks
         generateStarEvery: 400, // Ticks
-        //zIndex: -8,
+        zIndex: 2,
         speed: 0.2,
         // Warn! Supported onlu Y direction
         direction: {
             x: 0,
             y: 1
         }
+    },
+
+    score: {
+        horizontalAlign: 'left',
+        verticalAlign: 'top',
+        x: 15,
+        y: 10,
+        layout: 'box',
+        color: 'white',
+        zIndex: 10,
+        fontFamily: 'kenvector_future',
+        text: "000000",
+        size: 25,
+        wrap: true
     },
 
     // Sound section
@@ -107,56 +125,163 @@ exports = {
     // Enemy types section
     enemies: {
 
-        'red': {
+        'red1': {
+            name: 'red1',
             ctor: EnemyRed,
-            initCount: 10,
+            initCount: 20,
             image: 'resources/images/enemy_red.png',
-            speed: 0.1,
+            speed: 0.4,
+            width: 75,
+            height: 57,
+            amplitude: 100,
+            func: Math.sin
+        },
+
+        'red2': {
+            name: 'red2',
+            ctor: EnemyRed,
+            initCount: 20,
+            image: 'resources/images/enemy_red.png',
+            speed: 0.4,
+            width: 75,
+            height: 57,
+            amplitude: 100,
+            func: Math.cos
+        },
+
+        'blue': {
+            name: 'blue',
+            ctor: EnemyBlue,
+            initCount: 20,
+            image: 'resources/images/enemy_blue.png',
+            speed: 0.5,
             width: 75,
             height: 57
         }
+
     },
 
-    // Waves section
-    waves: {
-        1: {
-            delay: 2, // delay before spawn firs part
-            spawn: [{
-                enemies: ['red'],
-                count: 1,
-                delay: 2
-			}, {
-                enemies: ['red'],
-                count: 1,
-                delay: 1
-			}]
+    // Levels section
+    level_1: [
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
         },
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 7,
+            enemies: ['red2'],
+            position: 'center'
+		},
 
-        2: {
-            delay: 2, // delay before spawn firs part
-            spawn: [{
-                enemies: ['red'],
-                count: 1,
-                delay: 4
-			}, {
-                enemies: ['red'],
-                count: 1,
-                delay: 1
-			}]
-        },
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
+		},
 
-        3: {
-            delay: 2, // delay before spawn firs part
-            spawn: [{
-                enemies: ['red'],
-                count: 1,
-                delay: 4
-            }, {
-                enemies: ['red'],
-                count: 1,
-                delay: 1
-            }]
-        },
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red2'],
+            position: 'center'
+		},
 
-    }
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 7,
+            enemies: ['blue'],
+            position: 'right'
+		},
+
+        {
+            delay: 200,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
+		},
+
+        {
+            delay: 1000,
+            formation: "chain",
+            count: 7,
+            enemies: ['red2'],
+            position: 'center'
+		},
+
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 9,
+            enemies: ['blue'],
+            position: 'left'
+		},
+
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
+		},
+
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
+		},
+
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 4,
+            enemies: ['blue'],
+            position: 'center'
+		},
+
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red2'],
+            position: 'center'
+		},
+
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 3,
+            enemies: ['blue'],
+            position: 'left'
+		},
+
+        {
+            delay: 0,
+            formation: "chain",
+            count: 7,
+            enemies: ['red1'],
+            position: 'center'
+		},
+
+        {
+            delay: 2000,
+            formation: "chain",
+            count: 7,
+            enemies: ['blue'],
+            position: 'right'
+		}
+
+	]
+
 };

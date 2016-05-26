@@ -1,22 +1,31 @@
-import ui.View;
+import ui.View as View;
+
+import ui.TextView as TextView;
+import ui.widget.ButtonView as ButtonView;
+import ui.ScoreView as ScoreView;
+
 import math.util as util;
 import src.Config as Config;
+
 import src.entities.Player as Player;
+
 import src.utils.EntitiesPool as EntitiesPool;
 import src.utils.CollisionDetector as CollisionDetector;
 import src.utils.Particles as Particles;
+import src.utils.EnemyManager as EnemyManager;
+
 import src.views.ParallaxBackgroundScroll as ParallaxBackgroundScroll;
 import src.views.ParallaxItemsScroll as ParallaxItemsScroll;
 
-exports = Class(ui.View, function(supr) {
+
+exports = Class(View, function(supr) {
 
     this.pause = true;
 
     this.tag = "World";
     this.fixedTickDelta = 0;
     this.fixedTick = 30; // 30 ticks per second
-    this.currentWave = 1;
-    this.spawnIndex = 1;
+    this.score = 0;
 
     /**
      * init
@@ -44,12 +53,16 @@ exports = Class(ui.View, function(supr) {
         });
 
         this.bulletPool = new EntitiesPool(Config.bullets, this);
-        this.enemiesPool = new EntitiesPool(Config.enemies, this);
+        this.enemyManager = new EnemyManager(Config.level_1, this);
 
         this.particles = new Particles(this);
 
         this.parallaxBg = new ParallaxBackgroundScroll(Config.background, this);
         this.parallaxItems = new ParallaxItemsScroll(Config.env_items, this);
+
+        this.scoreView = new TextView(merge(Config.score, {
+            superview: this,
+        }));
     };
 
     /**
@@ -57,7 +70,6 @@ exports = Class(ui.View, function(supr) {
      */
     this.run = function() {
         this.pause = false;
-        this.spawnWaves(0, 0);
     };
 
     /**
@@ -67,9 +79,11 @@ exports = Class(ui.View, function(supr) {
 
         if (this.pause) return;
 
+        dt = Math.min(dt, Config.max_delta);
+
         this.player.update(dt);
         this.bulletPool.update(dt);
-        this.enemiesPool.update(dt);
+        this.enemyManager.update(dt);
 
         this.particles.update(dt);
 
@@ -85,54 +99,84 @@ exports = Class(ui.View, function(supr) {
     };
 
     /**
+     * Restart game
+     */
+    this.reset = function() {
+
+        this.removeSubview(this.gameoverText);
+        GC.app.view.removeSubview(this.resetBtn);
+
+        this.score = 0;
+        this.updateScoreView();
+
+        this.enemyManager.reset();
+        this.bulletPool.reset();
+
+        this.player.reset();
+    };
+
+    /**
+     * Show game over
+     */
+    this.gameOver = function() {
+
+        this.gameoverText = new TextView({
+            superview: this,
+            layout: 'box',
+            color: 'white',
+            zIndex: 10,
+            fontFamily: 'kenvector_future',
+            text: "GAME OVER",
+            size: 50,
+            wrap: true
+        });
+
+        this.resetBtn = new ButtonView({
+            superview: GC.app.view, // By some reason it's not works with world view
+            width: 128,
+            height: 128,
+            zIndex: 10,
+            x: GC.app.baseWidth / 2 - 128 / 2,
+            y: GC.app.baseHeight / 2 - 128 / 2 + 200,
+            images: {
+                down: "resources/images/ui/restart.png",
+                up: "resources/images/ui/restart.png"
+            },
+            on: {
+                up: this.reset.bind(this)
+            }
+        });
+    };
+
+    /**
      * Fixed update tick, ~30 ticks per second
      */
     this.fixedUpdate = function() {
 
         // Check if something from enemiesPool colide with items from bulletPool
         // If collision detected  CollisionDetector will call onCollision calbeack for enemiesPool item
-        CollisionDetector.check(this.enemiesPool.items, this.bulletPool.items);
+        CollisionDetector.check(this.enemyManager.getAllEnemies(), this.bulletPool.items);
+        CollisionDetector.check([this.player], this.enemyManager.getAllEnemies());
     };
 
     /**
-     *
+     * Update score view
      */
-    this.spawnWaves = function(delay, spawnIndex) {
+    this.addScore = function(amount) {
+        this.score += amount;
+        this.updateScoreView();
+    };
 
-        var current = Config.waves[this.currentWave];
+    /**
+     * Update score view
+     */
+    this.updateScoreView = function() {
 
-        if (!current) {
-            this.currentWave = 1;
-            this.spawnWaves(1, 0);
-            return; // There no other watves
-        }
+        var str = "" + this.score;
+        var pad = "000000"
+        var ans = pad.substring(0, pad.length - str.length) + str
 
-        var spawn = current.spawn[spawnIndex || 0]
-
-        // Switch to next wayve
-        if (!spawn) {
-            this.currentWave++;
-            var newWave = Config.waves[this.currentWave];
-            var newWaveDelay = newWave ? newWave.delay : 0;
-            return this.spawnWaves(newWaveDelay, 0);
-        }
-
-        setTimeout(function() {
-
-            for (var i = 0; i < spawn.count; i++) {
-
-                var randomEnemy = util.random(0, spawn.enemies.length);
-                var randomPosition = util.random(100, 500);
-
-                setTimeout(this.spawnEnemy.bind(this, spawn.enemies[randomEnemy], {
-                    x: randomPosition,
-                    y: 0
-                }), util.random(2000, 4000));
-            }
-
-            return this.spawnWaves(spawn.delay, ++spawnIndex);
-
-        }.bind(this), delay * 1000);
+        this.scoreView.setText(ans);
     };
 
     /**
@@ -140,8 +184,8 @@ exports = Class(ui.View, function(supr) {
      *
      * @arg {Object<x,y>} position - start position
      */
-    this.makeBang = function(position) {
-        this.particles.makeBang(position);
+    this.makeBang = function(position, size) {
+        this.particles.makeBang(position, size);
     };
 
     /**
@@ -155,16 +199,6 @@ exports = Class(ui.View, function(supr) {
         this.bulletPool.spawn(type, position, {
             direction: direction
         });
-    };
-
-    /**
-     * Shurtcut for enemy spawn
-     *
-     * @arg {String} type - See Config
-     * @arg {Object<x,y>} position - start position
-     */
-    this.spawnEnemy = function(type, position) {
-        this.enemiesPool.spawn(type, position);
     };
 
 });

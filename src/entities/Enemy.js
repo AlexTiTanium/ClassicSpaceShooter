@@ -26,12 +26,16 @@ exports = Class(ImageView, function(supr) {
 
         this.updateOpts({
             visible: true,
+            zIndex: 3,
+            anchorX: this.style.width / 2,
+            anchorY: this.style.height / 2,
             x: position.x - this.style.width / 2,
             y: position.y - this.style.height
         });
 
         this.speed = options.speed || 1;
-        this.pool = options.pool;
+
+        this.setOptions(options);
     };
 
     /**
@@ -48,6 +52,8 @@ exports = Class(ImageView, function(supr) {
         });
 
         GC.app.audio.play('explosion_enemy');
+
+        this.getSuperview().addScore(5);
     };
 
     /**
@@ -64,6 +70,13 @@ exports = Class(ImageView, function(supr) {
 
         this.style.x += dt * this.speed * this.direction.x;
         this.style.y += dt * this.speed * this.direction.y;
+
+        // Detect if enemy is out of view
+        if (this.style.x + this.style.width > GC.app.baseWidth ||
+            this.style.y - this.style.height > GC.app.baseHeight) {
+
+            this.release();
+        }
 
     };
 

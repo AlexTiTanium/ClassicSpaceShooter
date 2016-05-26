@@ -15,7 +15,8 @@ exports = Class(Emitter, function(supr) {
             superview: superview,
             width: 43,
             height: 43,
-            initCount: 100,
+            initCount: 300,
+            zIndex: 7,
             centerAnchor: true
         });
     };
@@ -23,9 +24,9 @@ exports = Class(Emitter, function(supr) {
     /**
      * Make particle explosion in position
      */
-    this.makeBang = function(position) {
+    this.makeBang = function(position, size) {
 
-        var size = 50;
+        size = size || 50;
         var particles = 20;
 
         var particleObjects = this.engine.obtainParticleArray(particles);

@@ -24,6 +24,7 @@ exports = Class(SpriteView, function(supr) {
             loop: false,
             frameRate: 40,
             visible: true,
+            zIndex: 6,
             x: position.x - this.style.width / 2,
             y: position.y - this.style.height
         });
@@ -61,6 +62,15 @@ exports = Class(SpriteView, function(supr) {
 
         this.style.x += dt * this.speed * this.direction.x;
         this.style.y += dt * this.speed * this.direction.y;
+
+        // Detect if bullet is out of view
+        if (this.style.x + this.style.width < 0 ||
+            this.style.y + this.style.height < 0 ||
+            this.style.x + this.style.width > GC.app.baseWidth ||
+            this.style.y - this.style.height > GC.app.baseHeight) {
+
+            this.release();
+        }
 
     };
 

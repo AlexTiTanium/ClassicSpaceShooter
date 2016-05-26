@@ -90,14 +90,14 @@ exports = Class(function() {
         this.delataItemsTicks += dt;
         this.delataStarTicks += dt;
 
-        for (var i = 0; i < this.items.length; i++) {
+        for (var i = this.items.length; i--;) {
             var item = this.items[i];
 
             item.update(dt);
 
-            if (item.style.y - item.style.width > item.height) {
+            if (item.style.y - item.style.height > GC.app.baseHeight) {
                 this.pool.releaseView(item);
-                this.items = this.items.slice(i, 1);
+                this.items.splice(i, 1);
             }
         }
 

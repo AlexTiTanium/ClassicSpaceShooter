@@ -20,7 +20,7 @@ exports = Class(Emitter, function(supr) {
         this.config = poolConfig;
 
         this.items = []; // Avoid object copy issues
-        this.pools = []; // Avoid object copy issues
+        this.pools = {}; // Avoid object copy issues
 
         Object.keys(poolConfig).forEach(function(entitieType) {
             this.pools[entitieType] = this.factory(entitieType, poolConfig[entitieType]);
@@ -42,6 +42,16 @@ exports = Class(Emitter, function(supr) {
     };
 
     /**
+     * Release all view
+     */
+    this.reset = function() {
+        this.items = [];
+        Object.keys(this.pools).forEach(function(entitieType) {
+            this.pools[entitieType].releaseAllViews();
+        }, this);
+    };
+
+    /**
      * Spawn new view from pool
      *
      * @arg {String} type
@@ -53,8 +63,9 @@ exports = Class(Emitter, function(supr) {
         var entitie = this.pools[type].obtainView();
 
         entitie.type = type;
-        entitie.remove = false; // If true will remove this on next iteration
 
+        entitie.remove = false; // If true will remove this on next iteration
+        entitie.startPosition = position;
         entitie.create(position, merge(this.config[type], options || {}));
 
         this.items.push(entitie);
@@ -65,20 +76,9 @@ exports = Class(Emitter, function(supr) {
      */
     this.update = function(dt) {
 
-        for (var i = 0; i < this.items.length; i++) {
+        for (var i = this.items.length; i--;) {
 
             var entitie = this.items[i];
-
-            // Detect if enemy is out of view
-            if (entitie.style.x + entitie.style.width < 0 ||
-                entitie.style.y + entitie.style.height < 0 ||
-                entitie.style.x + entitie.style.width > GC.app.baseWidth ||
-                entitie.style.y - entitie.style.height > GC.app.baseHeight) {
-
-                this.pools[entitie.type].releaseView(entitie);
-                this.items.splice(i, 1);
-                continue;
-            }
 
             // Relese removed objects
             if (entitie.remove) {

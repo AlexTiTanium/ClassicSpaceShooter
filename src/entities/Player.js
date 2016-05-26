@@ -14,11 +14,24 @@ exports = Class(ImageView, function(supr) {
 
     this.tag = "Player";
 
+    this.isDead = false;
+
     // Player alwas shot to up
     this.shoot_direction = new Vec2D({
         x: 0,
         y: -1
     });
+
+    // Discribe collision behaivoir
+    this.physics = function() {
+        return {
+            type: 'rect',
+            width: this.style.width,
+            height: this.style.height,
+            x: this.style.x,
+            y: this.style.y
+        };
+    };
 
     /**
      * Init
@@ -35,6 +48,11 @@ exports = Class(ImageView, function(supr) {
         });
 
         supr(this, 'init', [opts]);
+
+        this.startPosition = {
+            x: opts.x,
+            y: opts.y
+        };
 
         // Player will move to this point
         this.target = new Vec2D({
@@ -72,6 +90,7 @@ exports = Class(ImageView, function(supr) {
      **/
     this.update = function(dt) {
 
+        if (this.isDead) return;
         if (!this.shoot) return;
 
         // Shooting
@@ -105,9 +124,48 @@ exports = Class(ImageView, function(supr) {
     };
 
     /**
+     * Reset player state
+     */
+    this.reset = function() {
+
+        this.isDead = false;
+
+        this.updateOpts({
+            visible: true,
+            x: this.startPosition.x,
+            y: this.startPosition.y
+        });
+    };
+
+    /**
+     * Collision collback
+     */
+    this.onCollision = function(target) {
+
+        if (this.isDead) return;
+
+        this.isDead = true;
+
+        this.updateOpts({
+            visible: false
+        });
+
+        this.getSuperview().makeBang({
+            x: this.style.x + this.style.width / 2,
+            y: this.style.y + this.style.height / 2
+        }, 100);
+
+        GC.app.audio.play('explosion_player');
+
+        this.getSuperview().gameOver();
+    };
+
+    /**
      * Make one shoot
      **/
     this.makeOneShot = function() {
+
+        if (this.isDead) return;
 
         this.getSuperview().spawnBullet('blue', {
             x: this.style.x + ship_image.getWidth() / 2,
