@@ -4,95 +4,95 @@ import ui.ViewPool as ViewPool;
 
 exports = Class(function() {
 
-	/**
-	 * Init parallax bg scroll
-	 */
-	this.init = function(config, superview) {
+    /**
+     * Init parallax bg scroll
+     */
+    this.init = function(config, superview) {
 
-		this.superview = superview;
+        this.superview = superview;
 
-		this.width = superview.style.width;
-		this.height = superview.style.height;
+        this.width = superview.style.width;
+        this.height = superview.style.height;
 
-		this.tiles = [];
+        this.tiles = [];
 
-		this.pool = new ViewPool({
-			ctor: ParallaxView,
-			initCount: 21,
-			superview: this.superview,
-			initOpts: merge(config, {
-				superview: this.superview
-			})
-		});
+        this.pool = new ViewPool({
+            ctor: ParallaxView,
+            initCount: 21,
+            superview: this.superview,
+            initOpts: merge(config, {
+                superview: this.superview
+            })
+        });
 
-		this.build(config);
-	};
+        this.build(config);
+    };
 
-	/**
-	 * Build parallax background
-	 */
-	this.build = function(config) {
+    /**
+     * Build parallax background
+     */
+    this.build = function(config) {
 
-		var width = config.width;
-		var height = config.height;
+        var width = config.width;
+        var height = config.height;
 
-		var wCount = Math.ceil(this.width / width);
-		var hCount = Math.ceil(this.height / height) + 1; // Add one more tile on top
+        var wCount = Math.ceil(this.width / width);
+        var hCount = Math.ceil(this.height / height) + 1; // Add one more tile on top
 
-		for (var i = 0; i < wCount; i++) {
-			for (var j = -1; j < hCount; j++) {
-				this.addTile(i * width, j * height, config);
-			}
-		}
-	};
+        for (var i = 0; i < wCount; i++) {
+            for (var j = -1; j < hCount; j++) {
+                this.addTile(i * width, j * height, config);
+            }
+        }
+    };
 
-	/**
-	 * Create one tile
-	 */
-	this.addTile = function(x, y, opts) {
+    /**
+     * Create one tile
+     */
+    this.addTile = function(x, y, opts) {
 
-		var tile = this.pool.obtainView();
+        var tile = this.pool.obtainView();
 
-		tile.updateOpts({
-			x: x,
-			y: y
-		});
+        tile.updateOpts({
+            x: x,
+            y: y
+        });
 
-		tile.speed = opts.speed;
-		tile.direction = opts.direction;
+        tile.speed = opts.speed;
+        tile.direction = opts.direction;
 
-		this.tiles.push(tile);
-	};
+        this.tiles.push(tile);
+    };
 
-	/**
-	 * Move tile up
-	 */
-	this.tileMoveUp = function(tile) {
+    /**
+     * Move tile up
+     */
+    this.tileMoveUp = function(tile) {
 
-		var tile = this.pool.obtainView();
-		var hCount = Math.ceil(this.height / tile.style.height) + 1;
+        var tile = this.pool.obtainView();
+        var hCount = Math.ceil(this.height / tile.style.height) + 1;
 
-		tile.updateOpts({
-			y: (tile.style.y - hCount * tile.style.height) - tile.style.height
-		});
-	}
+        tile.updateOpts({
+            y: (tile.style.y - hCount * tile.style.height) - tile.style.height
+        });
+    }
 
-	/**
-	 * Move tiles
-	 */
-	this.update = function(dt) {
+    /**
+     * Move tiles
+     */
+    this.update = function(dt) {
 
-		for (var i = 0; i < this.tiles.length; i++) {
-			var tile = this.tiles[i];
+        for (var i = 0; i < this.tiles.length; i++) {
+            var tile = this.tiles[i];
 
-			tile.update(dt);
+            tile.update(dt);
 
-			if (tile.style.y - tile.style.width > this.height) {
-				this.pool.releaseView(tile);
-				this.tileMoveUp(tile);
-			}
-		}
+            if (tile.style.y - tile.style.width > this.height) {
+                this.pool.releaseView(tile);
+                this.tileMoveUp(tile);
+            }
+        }
 
-	};
+    };
 
 });
